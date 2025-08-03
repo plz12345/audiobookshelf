@@ -69,5 +69,7 @@ ENV SOURCE="docker"
 ENV NUSQLITE3_DIR=${NUSQLITE3_DIR}
 ENV NUSQLITE3_PATH=${NUSQLITE3_PATH}
 
+VOLUME ["/config", "/metadata"]
+
 ENTRYPOINT ["tini", "--"]
 CMD ["node", "index.js"]
