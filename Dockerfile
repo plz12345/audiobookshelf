@@ -58,6 +58,7 @@ WORKDIR /app
 COPY --from=build-client /client/dist /app/client/dist
 COPY --from=build-server /server /app
 COPY --from=build-server ${NUSQLITE3_PATH} ${NUSQLITE3_PATH}
+RUN test -f ${NUSQLITE3_PATH} || (echo "Missing native lib" && exit 1)
 
 EXPOSE 80
 
@@ -70,6 +71,13 @@ ENV NUSQLITE3_DIR=${NUSQLITE3_DIR}
 ENV NUSQLITE3_PATH=${NUSQLITE3_PATH}
 
 VOLUME ["/config", "/metadata"]
+
+try {
+  require('./server/index.js');
+} catch (err) {
+  console.error("Startup error:", err);
+  process.exit(1);
+}
 
 ENTRYPOINT ["tini", "--"]
 CMD ["node", "index.js"]
